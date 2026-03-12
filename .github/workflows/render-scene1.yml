@@ -13,11 +13,19 @@ jobs:
       - name: Install ffmpeg
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
 
+      - name: Ensure first scene photo exists
+        run: test -f assets/scene1/photo.jpg
+
       - name: Render first scene
         run: ./scripts/render-scene1.sh
+
+      - name: Validate mp4 duration
+        run: |
+          ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 output/scene1.mp4
 
       - name: Upload scene1 mp4
         uses: actions/upload-artifact@v4
         with:
           name: scene1-mp4
           path: output/scene1.mp4
+          if-no-files-found: error
